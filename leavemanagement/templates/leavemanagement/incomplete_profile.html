@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block title %}Profile Setup Required - Leave Management System{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 col-lg-6 mx-auto">
+        <div class="card mt-5 shadow">
+            <div class="card-header bg-warning text-dark">
+                <h4 class="mb-0"><i class="fas fa-exclamation-triangle me-2"></i>Profile Setup Required</h4>
+            </div>
+            <div class="card-body p-4">
+                <div class="alert alert-warning mb-4">
+                    <p class="mb-0">Your employee profile hasn't been set up yet. You need an employee profile to use the leave management features.</p>
+                </div>
+                
+                <h5>What does this mean?</h5>
+                <p>While your user account exists, you don't have an associated employee record in the system, which is required for leave management.</p>
+                
+                <h5>What should I do?</h5>
+                <p>You can create your own employee profile by clicking the button below:</p>
+
+                <div class="d-grid gap-2 my-4">
+                    <a href="/dashboard/create-profile/" class="btn btn-primary">
+                        <i class="fas fa-user-plus me-1"></i> Create My Employee Profile
+                    </a>
+                </div>
+
+                <div class="alert alert-info">
+                    <p class="mb-0">You'll need to provide your basic information including:</p>
+                    <ul class="mb-0 mt-2">
+                        <li>Employee ID</li>
+                        <li>Department</li>
+                        <li>Position</li>
+                        <li>Start date</li>
+                    </ul>
+                </div>
+
+                {% if user.is_staff %}
+                <div class="alert alert-info mt-4">
+                    <h5 class="alert-heading">Admin Notice</h5>
+                    <p>As an admin user, you can create employee profiles through the admin panel as well:</p>
+                    <ol>
+                        <li>Go to the <a href="{% url 'admin:index' %}">admin panel</a></li>
+                        <li>First create a Department (if none exists)</li>
+                        <li>Then create an Employee record linked to user accounts</li>
+                    </ol>
+                </div>
+                {% endif %}
+            </div>
+            <div class="card-footer">
+                <div class="d-grid">
+                    <a href="{% url 'home' %}" class="btn btn-outline-secondary">
+                        <i class="fas fa-home me-1"></i> Back to Home
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

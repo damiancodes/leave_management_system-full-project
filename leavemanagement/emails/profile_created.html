@@ -1,0 +1,14 @@
+{% extends 'leavemanagement/emails/base_email.html' %}
+
+{% block content %}
+<h2>Welcome to the Leave Management System!</h2>
+<p>Hello {{ user.first_name }},</p>
+<p>Your profile has been successfully created in our Leave Management System.</p>
+<p>You can now log in to view your leave balances, apply for leave, and more.</p>
+<p>
+    <a href="{{ request.scheme }}://{{ request.get_host }}{% url 'leavemanagement:dashboard' %}" class="button">
+        Access Dashboard
+    </a>
+</p>
+<p>If you have any questions, please contact your HR department.</p>
+{% endblock %}

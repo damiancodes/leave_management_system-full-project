@@ -1,0 +1,389 @@
+
+{% extends 'base.html' %}
+
+{% block title %}Admin Dashboard - Leave Management System{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12 mb-4">
+        <h2><i class="fas fa-tachometer-alt me-2"></i>Admin Dashboard</h2>
+        <hr>
+    </div>
+</div>
+
+<!-- Admin Actions Section -->
+<div class="row">
+    <div class="col-md-6 mb-4">
+        <div class="card admin-card admin-actions shadow-sm">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-tools me-2"></i>Admin Actions</h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="list-group list-group-flush">
+                    <a href="{% url 'admin:index' %}" class="list-group-item list-group-item-action">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h5 class="mb-1"><i class="fas fa-cog me-2"></i>Django Admin Panel</h5>
+                        </div>
+                    </a>
+
+                    <a href="{% url 'leavemanagement:employees_list' %}" class="list-group-item list-group-item-action">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h5 class="mb-1"><i class="fas fa-users me-2"></i>Manage Employees</h5>
+                        </div>
+                        <p class="mb-1">View, add, edit and delete employee records</p>
+                    </a>
+
+                    <a href="{% url 'leavemanagement:add_leave_type' %}" class="list-group-item list-group-item-action">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h5 class="mb-1"><i class="fas fa-list-alt me-2"></i>Manage Leave Types</h5>
+                        </div>
+                    </a>
+
+                    <a href="{% url 'leavemanagement:add_holiday' %}" class="list-group-item list-group-item-action">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h5 class="mb-1"><i class="fas fa-calendar me-2"></i>Manage Holidays</h5>
+                        </div>
+                        <p class="mb-1">Add and manage company holidays</p>
+                    </a>
+
+                    <a href="{% url 'leavemanagement:leaves_report' %}" class="list-group-item list-group-item-action">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h5 class="mb-1"><i class="fas fa-chart-bar me-2"></i>Leave Reports</h5>
+                        </div>
+                        <p class="mb-1">Generate and view leave reports</p>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Setup Required Section -->
+    <div class="col-md-6 mb-4">
+        <div class="card admin-card setup-required shadow-sm">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-exclamation-triangle me-2"></i>Setup Required</h5>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-warning">
+                    <h5 class="alert-heading">Your Employee Profile</h5>
+                    <p>You don't have an employee profile set up. Some system features require an employee profile.</p>
+                    <hr>
+                    <p class="mb-0">To create an employee profile for yourself, follow these steps:</p>
+                    <div class="mt-2 setup-steps">
+                        <div class="setup-step"><i class="fas fa-angle-right text-warning"></i> Go to the <a href="{% url 'admin:index' %}">Django Admin</a></div>
+                        <div class="setup-step"><i class="fas fa-angle-right text-warning"></i> If no Department exists, create one first</div>
+                        <div class="setup-step"><i class="fas fa-angle-right text-warning"></i> Then create an Employee record and link it to your user account</div>
+                    </div>
+                </div>
+
+                <h5 class="mt-4">Initial System Setup</h5>
+                <p>For a functional leave management system, make sure to set up:</p>
+                <div class="setup-checklist">
+                    <div class="checklist-item"><i class="fas fa-check text-success"></i> Create <strong>Departments</strong> for your organization</div>
+                    <div class="checklist-item"><i class="fas fa-check text-success"></i> Add <strong>Leave Types</strong> (e.g., Vacation, Sick Leave)</div>
+                    <div class="checklist-item"><i class="fas fa-check text-success"></i> Set up <strong>Holidays</strong> for the current year</div>
+                    <div class="checklist-item"><i class="fas fa-check text-success"></i> Create <strong>Employee</strong> records for all users</div>
+                    <div class="checklist-item"><i class="fas fa-check text-success"></i> Set up <strong>Leave Balances</strong> for each employee</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Enhanced Quick Stats Section -->
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0"><i class="fas fa-lightbulb me-2"></i>Quick Stats</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3 mb-3">
+                        <div class="card bg-primary text-white stats-card">
+                            <div class="card-body text-center">
+                                <i class="fas fa-users fa-2x mb-2"></i>
+                                <h3 class="counter-value">{{ user_count|default:"0" }}</h3>
+                                <p class="mb-0">Total Users</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3 mb-3">
+                        <div class="card bg-success text-white stats-card">
+                            <div class="card-body text-center">
+                                <i class="fas fa-building fa-2x mb-2"></i>
+                                <h3 class="counter-value">{{ department_count|default:"0" }}</h3>
+                                <p class="mb-0">Departments</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3 mb-3">
+                        <div class="card bg-warning text-dark stats-card">
+                            <div class="card-body text-center">
+                                <i class="fas fa-clock fa-2x mb-2"></i>
+                                <h3 class="counter-value">{{ pending_count|default:"0" }}</h3>
+                                <p class="mb-0">Pending Leaves</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3 mb-3">
+                        <div class="card bg-danger text-white stats-card">
+                            <div class="card-body text-center">
+                                <i class="fas fa-calendar-alt fa-2x mb-2"></i>
+                                <h3 class="counter-value">{{ leave_count|default:"0" }}</h3>
+                                <p class="mb-0">Total Leaves</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Include the counter animation script -->
+<script>
+// Admin Dashboard Stats Animation
+document.addEventListener('DOMContentLoaded', function() {
+    // Counter animation function
+    function animateCounter(element, target, duration = 1500) {
+        // Get the target number
+        const targetNumber = parseInt(target);
+
+        // Skip animation if target is 0 or not a number
+        if (isNaN(targetNumber) || targetNumber === 0) {
+            element.textContent = '0';
+            return;
+        }
+
+        // Starting from 0
+        let start = 0;
+        const increment = targetNumber / (duration / 16); // 60 fps
+
+        // Function to update the counter
+        function updateCounter() {
+            start += increment;
+
+            if (start >= targetNumber) {
+                element.textContent = targetNumber.toString();
+            } else {
+                element.textContent = Math.round(start).toString();
+                requestAnimationFrame(updateCounter);
+            }
+        }
+
+        // Start the animation
+        updateCounter();
+    }
+
+    // Find all counters
+    const counters = document.querySelectorAll('.counter-value');
+
+    // Animate each counter
+    counters.forEach(counter => {
+        // Get the target number from the counter's text
+        const target = counter.textContent;
+        // Reset to 0 before starting animation
+        counter.textContent = '0';
+        // Start animation with a slight delay
+        setTimeout(() => {
+            animateCounter(counter, target);
+        }, 300);
+    });
+});
+</script>
+
+<style>
+/* Stats card enhancements */
+.stats-card {
+    border-radius: 10px;
+    height: 100%;
+    transition: transform 0.3s, box-shadow 0.3s;
+    position: relative;
+    overflow: hidden;
+}
+
+.stats-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+}
+
+.stats-card::before {
+    content: '';
+    position: absolute;
+    top: -20px;
+    right: -20px;
+    background: rgba(255, 255, 255, 0.1);
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    z-index: 0;
+}
+
+.stats-card i {
+    position: relative;
+    z-index: 1;
+    opacity: 0.9;
+}
+
+.stats-card h3 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    margin: 10px 0;
+    position: relative;
+    z-index: 1;
+}
+
+.bg-primary.stats-card {
+    background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
+}
+
+.bg-success.stats-card {
+    background: linear-gradient(135deg, #1cc88a 0%, #13855c 100%);
+}
+
+.bg-warning.stats-card {
+    background: linear-gradient(135deg, #f6c23e 0%, #dda20a 100%);
+}
+
+.bg-danger.stats-card {
+    background: linear-gradient(135deg, #e74a3b 0%, #be2617 100%);
+}
+
+/* Admin Actions & Setup Required Enhanced Styling */
+
+/* Card header styling */
+.card-header {
+    padding: 15px 20px;
+    font-weight: 600;
+}
+
+.admin-card .card-header {
+    border-bottom: none;
+}
+
+/* Admin Actions section */
+.admin-actions .card-header {
+    background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
+    color: white;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+/* List group item styling */
+.admin-actions .list-group-item {
+    border-left: none;
+    border-right: none;
+    padding: 15px 20px;
+    transition: all 0.2s;
+    position: relative;
+}
+
+.admin-actions .list-group-item:first-child {
+    border-top: none;
+}
+
+.admin-actions .list-group-item:hover {
+    background-color: #f8f9fa;
+    transform: translateX(5px);
+}
+
+/* Icon styling */
+.admin-actions .list-group-item i {
+    width: 24px;
+    height: 24px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    margin-right: 10px;
+    color: white;
+    transition: transform 0.2s;
+}
+
+/* Different colors for different action icons */
+.admin-actions .list-group-item i.fa-cog {
+    background-color: #4e73df; /* Blue */
+}
+
+.admin-actions .list-group-item i.fa-users {
+    background-color: #1cc88a; /* Green */
+}
+
+.admin-actions .list-group-item i.fa-list-alt {
+    background-color: #f6c23e; /* Yellow */
+}
+
+.admin-actions .list-group-item i.fa-calendar {
+    background-color: #e74a3b; /* Red */
+}
+
+.admin-actions .list-group-item i.fa-chart-bar {
+    background-color: #36b9cc; /* Cyan */
+}
+
+.admin-actions .list-group-item:hover i {
+    transform: scale(1.2);
+}
+
+/* Add right arrow icon */
+.admin-actions .list-group-item::after {
+    content: '\f054'; /* Font Awesome right arrow icon */
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #d1d3e2;
+    transition: all 0.2s;
+    opacity: 0;
+}
+
+.admin-actions .list-group-item:hover::after {
+    opacity: 1;
+    right: 15px;
+}
+
+/* Setup Required styling */
+.setup-required .card-header {
+    background: linear-gradient(135deg, #f6c23e 0%, #dda20a 100%);
+    color: #5a5c69;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+/* Alert styling */
+.setup-required .alert {
+    border: none;
+    border-left: 4px solid #f6c23e;
+    background-color: #fff8e1;
+}
+
+/* Setup step styling */
+.setup-steps .setup-step,
+.setup-checklist .checklist-item {
+    margin-bottom: 8px;
+    padding-left: 5px;
+    display: flex;
+    align-items: flex-start;
+}
+
+.setup-steps .setup-step i,
+.setup-checklist .checklist-item i {
+    margin-right: 10px;
+    min-width: 14px; /* Ensures consistent spacing */
+}
+
+/* Setup heading */
+.setup-required h5.mt-4 {
+    color: #5a5c69;
+    font-weight: 600;
+    margin-top: 25px;
+    margin-bottom: 15px;
+}
+</style>
+{% endblock %}

@@ -1,0 +1,192 @@
+
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Welcome - Leave Management System{% endblock %}
+
+{% block extra_css %}
+<style>
+/* Feature Cards Styling */
+.feature-card {
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.07);
+    background-color: white;
+    padding: 30px 20px;
+    text-align: center;
+    transition: transform 0.3s, box-shadow 0.3s;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.feature-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+.feature-card h3 {
+    font-size: 1.6rem;
+    margin: 15px 0 10px;
+    color: #333;
+    font-weight: 600;
+}
+
+.feature-card p {
+    color: #666;
+    line-height: 1.5;
+    margin-bottom: 0;
+}
+
+.feature-icon {
+    height: 60px;
+    width: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 15px;
+}
+
+.feature-icon svg {
+    width: 100%;
+    height: 100%;
+    fill: #1a73e8;
+}
+
+/* About section styling */
+.about-section {
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.07);
+    background-color: white;
+    padding: 30px;
+    margin-top: 30px;
+}
+
+.about-section h2 {
+    font-size: 1.8rem;
+    margin-bottom: 15px;
+    color: #333;
+    font-weight: 600;
+}
+
+.about-section p {
+    color: #555;
+    line-height: 1.6;
+    margin-bottom: 15px;
+}
+
+.get-started-btn {
+    background-color: #1a73e8;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+}
+
+.get-started-btn:hover {
+    background-color: #0d62c9;
+    color: white;
+}
+
+.get-started-btn svg {
+    width: 20px;
+    height: 20px;
+    margin-right: 8px;
+    fill: white;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-md-12 text-center mb-5">
+            <h1 class="display-4">Leave Management System</h1>
+            <p class="lead">An efficient solution for managing employee leaves and time-off requests.</p>
+            {% if user.is_authenticated %}
+            <a href="{% url 'leavemanagement:dashboard' %}" class="btn btn-primary btn-lg mt-3">
+                <i class="fas fa-tachometer-alt me-2"></i>Go to Dashboard
+            </a>
+            {% else %}
+            <div class="mt-4">
+                <a href="{% url 'login' %}" class="btn btn-primary btn-lg me-2">
+                    <i class="fas fa-sign-in-alt me-2"></i>Login
+                </a>
+                <a href="{% url 'register' %}" class="btn btn-success btn-lg">
+                    <i class="fas fa-user-plus me-2"></i>Register
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="row mt-5">
+        <!-- Leave Management Card -->
+        <div class="col-md-4 mb-4">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#1a73e8">
+                        <path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM9 10H7v2h2v-2zm0 4H7v2h2v-2zm4-4h-2v2h2v-2zm4 0h-2v2h2v-2zm-4 4h-2v2h2v-2zm4 0h-2v2h2v-2z"/>
+                        <path d="M12 14l4-4-1.41-1.41L12 11.17l-1.59-1.58L9 11l3 3z" fill="#1a73e8"/>
+                    </svg>
+                </div>
+                <h3>Easy Leave Management</h3>
+                <p>Submit, track, and manage leave requests with just a few clicks.</p>
+            </div>
+        </div>
+
+        <!-- Reports Card -->
+        <div class="col-md-4 mb-4">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#1a73e8">
+                        <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zM7 10h2v7H7zm4-3h2v10h-2zm4 6h2v4h-2z"/>
+                    </svg>
+                </div>
+                <h3>Comprehensive Reports</h3>
+                <p>Access detailed reports and analytics on leave patterns.</p>
+            </div>
+        </div>
+
+        <!-- Team Management Card -->
+        <div class="col-md-4 mb-4">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#1a73e8">
+                        <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
+                    </svg>
+                </div>
+                <h3>Team Management</h3>
+                <p>Efficiently manage your team's time-off requests and schedules.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- About Section -->
+    <div class="about-section">
+        <h2>About Our System</h2>
+        <p>Our Leave Management System streamlines the entire leave request and approval process. Employees can easily submit leave requests, track their leave balances, and view their leave history. Managers can efficiently review and approve leave requests, ensuring smooth team operations.</p>
+        <p>The system provides comprehensive reporting tools, customizable leave types, and automated notifications to keep everyone informed.</p>
+
+        {% if not user.is_authenticated %}
+        <div class="text-center mt-4">
+            <a href="{% url 'register' %}" class="get-started-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white">
+                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                </svg>
+                Get Started Today
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

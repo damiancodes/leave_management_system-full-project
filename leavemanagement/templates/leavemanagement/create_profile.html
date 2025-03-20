@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+
+{% block title %}Create Your Profile - Leave Management System{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12 mb-4">
+        <h2><i class="fas fa-user-plus me-2"></i>Create Your Employee Profile</h2>
+        <hr>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-8 col-md-10 mx-auto">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Employee Information</h5>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info">
+                    <p><i class="fas fa-info-circle me-2"></i> Welcome to the Leave Management System! To get started, please complete your employee profile.</p>
+                </div>
+
+                <form method="post" action="/dashboard/create-profile/">
+                    {% csrf_token %}
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="employee_id" class="form-label">Employee ID</label>
+                            <input type="text" class="form-control" id="employee_id" name="employee_id" required>
+                            <div class="form-text">This is your unique identifier in the organization</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="department" class="form-label">Department</label>
+                            <select class="form-select" id="department" name="department" required>
+                                <option value="">Select Department</option>
+                                {% for dept in departments %}
+                                <option value="{{ dept.id }}">{{ dept.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="position" class="form-label">Position/Title</label>
+                            <input type="text" class="form-control" id="position" name="position" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="phone_number" class="form-label">Phone Number (Optional)</label>
+                            <input type="text" class="form-control" id="phone_number" name="phone_number">
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="date_joined" class="form-label">Date Joined</label>
+                            <input type="date" class="form-control" id="date_joined" name="date_joined"
+                                   value="{% now 'Y-m-d' %}">
+                        </div>
+                        {% if managers %}
+                        <div class="col-md-6">
+                            <label for="manager" class="form-label">Manager (Optional)</label>
+                            <select class="form-select" id="manager" name="manager">
+                                <option value="">No Manager</option>
+                                {% for mgr in managers %}
+                                <option value="{{ mgr.id }}">{{ mgr.user.get_full_name }} ({{ mgr.position }})</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="d-grid gap-2 mt-4">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-1"></i> Create My Profile
+                        </button>
+                    </div>
+                </form>
+            </div>
+            <div class="card-footer text-muted">
+                <p class="small mb-0">
+                    <i class="fas fa-info-circle me-1"></i>
+                    Your profile information will be reviewed by an administrator. You'll have access to all leave management features once your profile is created.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

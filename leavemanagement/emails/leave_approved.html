@@ -1,0 +1,42 @@
+{% extends 'leavemanagement/emails/base_email.html' %}
+
+{% block content %}
+<h2>Leave Request Approved</h2>
+<p>Hello {{ user.first_name }},</p>
+<p>Your leave request has been <strong style="color: #28a745;">approved</strong>.</p>
+
+<table>
+    <tr>
+        <th>Leave Type:</th>
+        <td>{{ leave_request.leave_type.name }}</td>
+    </tr>
+    <tr>
+        <th>From:</th>
+        <td>{{ leave_request.start_date }}</td>
+    </tr>
+    <tr>
+        <th>To:</th>
+        <td>{{ leave_request.end_date }}</td>
+    </tr>
+    <tr>
+        <th>Days:</th>
+        <td>{{ leave_request.requested_days }}</td>
+    </tr>
+    {% if leave_request.comments %}
+    <tr>
+        <th>Comments:</th>
+        <td>{{ leave_request.comments }}</td>
+    </tr>
+    {% endif %}
+</table>
+
+<p>
+{#    <a href="{{ request.scheme }}://{{ request.get_host }}{% url 'leavemanagement:leave_details' leave_request.id %}" class="button">#}
+{#        View Leave Details#}
+{#    </a>#}
+
+<a href="{{ site_url }}{% url 'leavemanagement:leave_details' leave_request.id %}" class="button">
+    View Leave Details
+</a>
+</p>
+{% endblock %}

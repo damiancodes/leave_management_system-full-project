@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block title %}Logged Out - Leave Management System{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 col-lg-6 col-xl-5 mx-auto">
+        <div class="card mt-5 shadow">
+            <div class="card-header bg-success text-white">
+                <h4 class="mb-0 text-center"><i class="fas fa-check-circle me-2"></i>Logged Out</h4>
+            </div>
+            <div class="card-body p-4 text-center">
+                <p class="lead">You have been successfully logged out.</p>
+                <p>Thank you for using the Leave Management System!</p>
+                <div class="mt-4">
+                    <a href="{% url 'login' %}" class="btn btn-primary">
+                        <i class="fas fa-sign-in-alt me-2"></i>Log in Again
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

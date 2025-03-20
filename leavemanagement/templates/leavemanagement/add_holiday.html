@@ -1,0 +1,257 @@
+{% extends 'base.html' %}
+
+{% block title %}Manage Holidays - Leave Management System{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12 mb-4">
+        <h2><i class="fas fa-calendar-alt me-2"></i>Manage Holidays</h2>
+        <hr>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-5 col-md-12 mb-4">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Add New Holiday</h5>
+            </div>
+            <div class="card-body">
+                <form method="post" action="{% url 'leavemanagement:add_holiday' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="holiday_id" id="holiday_id">
+                    
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Holiday Name</label>
+                        <input type="text" class="form-control" id="name" name="name" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="date" class="form-label">Date</label>
+                        <input type="text" class="form-control date-picker" id="date" name="date" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Description (Optional)</label>
+                        <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary" id="submit-btn">
+                            <i class="fas fa-plus-circle me-1"></i> Add Holiday
+                        </button>
+                        <button type="button" class="btn btn-outline-secondary d-none" id="cancel-btn" onclick="resetForm()">
+                            <i class="fas fa-times me-1"></i> Cancel Edit
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-7 col-md-12">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Holiday Calendar</h5>
+            </div>
+            <div class="card-body">
+                {% if holidays %}
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>Holiday</th>
+                                <th>Date</th>
+                                <th>Day</th>
+                                <th>Description</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for holiday in holidays %}
+                            <tr>
+                                <td>{{ holiday.name }}</td>
+                                <td>{{ holiday.date|date:"d M Y" }}</td>
+                                <td>{{ holiday.date|date:"l" }}</td>
+                                <td>{{ holiday.description|default:"-"|truncatechars:30 }}</td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <button type="button" class="btn btn-sm btn-primary edit-btn" 
+                                                data-id="{{ holiday.id }}"
+                                                data-name="{{ holiday.name }}"
+                                                data-date="{{ holiday.date|date:'Y-m-d' }}"
+                                                data-description="{{ holiday.description }}">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-sm btn-danger delete-btn"
+                                                data-id="{{ holiday.id }}"
+                                                data-name="{{ holiday.name }}"
+                                                data-bs-toggle="modal" 
+                                                data-bs-target="#deleteModal">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i> No holidays have been added yet.
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Year Summary Card -->
+        <div class="card mt-4">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0">Year Summary</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <div class="card bg-light">
+                            <div class="card-body text-center">
+                                <h4>{{ total_holidays }}</h4>
+                                <p class="mb-0">Total Holidays</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4 mb-3">
+                        <div class="card bg-light">
+                            <div class="card-body text-center">
+                                <h4>{{ first_half_count }}</h4>
+                                <p class="mb-0">First Half (Jan-Jun)</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4 mb-3">
+                        <div class="card bg-light">
+                            <div class="card-body text-center">
+                                <h4>{{ second_half_count }}</h4>
+                                <p class="mb-0">Second Half (Jul-Dec)</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="alert alert-info mt-3 mb-0">
+                    <p class="mb-0">
+                        <i class="fas fa-info-circle me-1"></i> 
+                        Holidays are automatically considered when calculating working days for leave requests.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title">Delete Holiday</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete the holiday <strong id="delete-holiday-name"></strong>?</p>
+                <p class="text-danger">This action cannot be undone.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form id="delete-form" method="post" action="">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize datepicker
+        flatpickr(".date-picker", {
+            altInput: true,
+            altFormat: "F j, Y",
+            dateFormat: "Y-m-d"
+        });
+        
+        // Edit button functionality
+        const editButtons = document.querySelectorAll('.edit-btn');
+        const submitBtn = document.getElementById('submit-btn');
+        const cancelBtn = document.getElementById('cancel-btn');
+        const holidayIdInput = document.getElementById('holiday_id');
+        const nameInput = document.getElementById('name');
+        const dateInput = document.getElementById('date');
+        const descriptionInput = document.getElementById('description');
+        
+        editButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const id = this.getAttribute('data-id');
+                const name = this.getAttribute('data-name');
+                const date = this.getAttribute('data-date');
+                const description = this.getAttribute('data-description');
+                
+                holidayIdInput.value = id;
+                nameInput.value = name;
+                
+                // Update the flatpickr instance
+                const datePicker = document.querySelector(".date-picker")._flatpickr;
+                datePicker.setDate(date);
+                
+                descriptionInput.value = description;
+                
+                submitBtn.innerHTML = '<i class="fas fa-save me-1"></i> Update Holiday';
+                cancelBtn.classList.remove('d-none');
+                
+                // Scroll to form
+                document.querySelector('.card-header').scrollIntoView();
+            });
+        });
+        
+        // Delete button functionality
+        const deleteButtons = document.querySelectorAll('.delete-btn');
+        const deleteForm = document.getElementById('delete-form');
+        const deleteHolidayName = document.getElementById('delete-holiday-name');
+        
+        deleteButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const id = this.getAttribute('data-id');
+                const name = this.getAttribute('data-name');
+                
+                deleteHolidayName.textContent = name;
+                deleteForm.action = "{% url 'leavemanagement:delete_holiday' 0 %}".replace('0', id);
+            });
+        });
+        
+        // Reset form function
+        window.resetForm = function() {
+            holidayIdInput.value = '';
+            nameInput.value = '';
+            
+            // Reset the flatpickr instance
+            const datePicker = document.querySelector(".date-picker")._flatpickr;
+            datePicker.clear();
+            
+            descriptionInput.value = '';
+            
+            submitBtn.innerHTML = '<i class="fas fa-plus-circle me-1"></i> Add Holiday';
+            cancelBtn.classList.add('d-none');
+        };
+    });
+</script>
+{% endblock %}

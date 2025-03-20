@@ -1,0 +1,225 @@
+
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - Leave Management System{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12 mb-4">
+        <h2><i class="fas fa-tachometer-alt me-2"></i>Dashboard</h2>
+        <hr>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Welcome Card -->
+    <div class="col-md-8 mb-4">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3 col-sm-4 text-center mb-3 mb-md-0">
+                        {% if employee.profile_picture %}
+                            <img src="{{ employee.profile_picture.url }}" alt="Profile picture" class="rounded-circle img-fluid" style="width: 120px; height: 120px; object-fit: cover;">
+                        {% else %}
+                            <div class="bg-light rounded-circle d-flex align-items-center justify-content-center mx-auto" style="width: 120px; height: 120px;">
+                                <i class="fas fa-user fa-4x text-secondary"></i>
+                            </div>
+                        {% endif %}
+                        <a href="{% url 'leavemanagement:edit_profile' %}" class="btn btn-sm btn-outline-primary mt-2">
+                            <i class="fas fa-edit me-1"></i> Edit Profile
+                        </a>
+                    </div>
+                    <div class="col-md-9 col-sm-8">
+                        <h4 class="card-title">Welcome, {{ employee.user.first_name|default:employee.user.username }}!</h4>
+                        <div class="employee-details mt-3">
+                            <p class="mb-2"><strong>Employee ID:</strong> {{ employee.employee_id }}</p>
+                            <p class="mb-2"><strong>Department:</strong> {{ employee.department.name }}</p>
+                            <p class="mb-2"><strong>Position:</strong> {{ employee.position }}</p>
+                            <p class="mb-0"><strong>Manager:</strong> {{ employee.manager.user.get_full_name|default:"Not Assigned" }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="col-md-4 mb-4">
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Quick Actions</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="{% url 'leavemanagement:apply_leave' %}" class="btn btn-primary">
+                        <i class="fas fa-plus-circle me-1"></i> Apply for Leave
+                    </a>
+                    <a href="{% url 'leavemanagement:my_leaves' %}" class="btn btn-outline-primary">
+                        <i class="fas fa-list me-1"></i> View My Leaves
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Leave Balances -->
+    <div class="col-md-6 mb-4">
+        <div class="card shadow-sm">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0"><i class="fas fa-balance-scale me-1"></i> Leave Balances</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Leave Type</th>
+                                <th>Allocated</th>
+                                <th>Used</th>
+                                <th>Remaining</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for balance in leave_balances %}
+                            <tr>
+                                <td>{{ balance.leave_type.name }}</td>
+                                <td>{{ balance.allocated_days }}</td>
+                                <td>{{ balance.used_days }}</td>
+                                <td>
+                                    <span class="badge {% if balance.remaining_days > 5 %}bg-success{% elif balance.remaining_days > 0 %}bg-warning{% else %}bg-danger{% endif %}">
+                                        {{ balance.remaining_days }}
+                                    </span>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="4" class="text-center">No leave balances available.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Leave Applications -->
+    <div class="col-md-6 mb-4">
+        <div class="card shadow-sm">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0"><i class="fas fa-history me-1"></i> Recent Leave Applications</h5>
+            </div>
+            <div class="card-body">
+                {% if recent_leaves %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Type</th>
+                                <th>From</th>
+                                <th>To</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for leave in recent_leaves %}
+                            <tr>
+                                <td>{{ leave.leave_type.name }}</td>
+                                <td>{{ leave.start_date|date:"d M Y" }}</td>
+                                <td>{{ leave.end_date|date:"d M Y" }}</td>
+                                <td>
+                                    <span class="badge
+                                    {% if leave.status == 'approved' %}bg-success
+                                    {% elif leave.status == 'rejected' %}bg-danger
+                                    {% elif leave.status == 'cancelled' %}bg-secondary
+                                    {% else %}bg-warning{% endif %}">
+                                        {{ leave.status|title }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <a href="{% url 'leavemanagement:leave_details' leave.id %}" class="btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-3">
+                    <i class="fas fa-info-circle fa-2x mb-3 text-info"></i>
+                    <p>You haven't applied for any leaves yet.</p>
+                    <a href="{% url 'leavemanagement:apply_leave' %}" class="btn btn-primary btn-sm">
+                        <i class="fas fa-plus-circle me-1"></i> Apply Now
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+            {% if recent_leaves %}
+            <div class="card-footer">
+                <a href="{% url 'leavemanagement:my_leaves' %}" class="btn btn-sm btn-outline-primary">View All</a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% if user.is_staff or is_manager %}
+<div class="row">
+    <!-- Pending Approvals Card (for managers) -->
+    <div class="col-md-12 mb-4">
+        <div class="card shadow-sm">
+            <div class="card-header bg-warning text-dark">
+                <h5 class="mb-0"><i class="fas fa-clock me-1"></i> Pending Approvals</h5>
+            </div>
+            <div class="card-body">
+                {% if pending_approvals_count > 0 %}
+                <p>You have {{ pending_approvals_count }} pending leave request{{ pending_approvals_count|pluralize }} to approve.</p>
+                <a href="{% url 'leavemanagement:pending_leaves' %}" class="btn btn-warning">
+                    <i class="fas fa-list me-1"></i> View Pending Requests
+                </a>
+                {% else %}
+                <p><i class="fas fa-check-circle me-2"></i> No pending leave requests requiring your approval.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Calendar Section -->
+<div class="row">
+    <div class="col-md-12 mb-4">
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="fas fa-calendar me-1"></i> Upcoming Holidays</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    {% for holiday in upcoming_holidays %}
+                    <div class="col-md-4 mb-3">
+                        <div class="card bg-light h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ holiday.name }}</h5>
+                                <h6 class="card-subtitle mb-2 text-muted">{{ holiday.date|date:"l, F d, Y" }}</h6>
+                                <p class="card-text small">{{ holiday.description|default:"" }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="col-12">
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i> No upcoming holidays in the next 30 days.
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

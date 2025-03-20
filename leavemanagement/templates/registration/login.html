@@ -1,0 +1,134 @@
+{#{% extends 'base.html' %}#}
+{##}
+{#{% block title %}Login - Leave Management System{% endblock %}#}
+{##}
+{#{% block content %}#}
+{#<div class="row">#}
+{#    <div class="col-md-8 col-lg-6 col-xl-5 mx-auto">#}
+{#        <div class="card mt-5 shadow">#}
+{#            <div class="card-header bg-primary text-white">#}
+{#                <h4 class="mb-0 text-center"><i class="fas fa-sign-in-alt me-2"></i>Login</h4>#}
+{#            </div>#}
+{#            <div class="card-body p-4">#}
+{#                {% if form.errors %}#}
+{#                <div class="alert alert-danger">#}
+{#                    <strong>Error:</strong> Your username and password didn't match. Please try again.#}
+{#                </div>#}
+{#                {% endif %}#}
+{##}
+{#                {% if next %}#}
+{#                    {% if user.is_authenticated %}#}
+{#                    <div class="alert alert-warning">#}
+{#                        Your account doesn't have access to this page. To proceed,#}
+{#                        please login with an account that has access.#}
+{#                    </div>#}
+{#                    {% else %}#}
+{#                    <div class="alert alert-info">#}
+{#                        Please login to access this page.#}
+{#                    </div>#}
+{#                    {% endif %}#}
+{#                {% endif %}#}
+{##}
+{#                <form method="post" action="{% url 'login' %}">#}
+{#                    {% csrf_token %}#}
+{#                    <div class="mb-3">#}
+{#                        <label for="id_username" class="form-label">Username</label>#}
+{#                        <div class="input-group">#}
+{#                            <span class="input-group-text"><i class="fas fa-user"></i></span>#}
+{#                            <input type="text" name="username" autofocus autocapitalize="none" #}
+{#                                autocomplete="username" maxlength="150" class="form-control" #}
+{#                                required id="id_username">#}
+{#                        </div>#}
+{#                    </div>#}
+{#                    <div class="mb-4">#}
+{#                        <label for="id_password" class="form-label">Password</label>#}
+{#                        <div class="input-group">#}
+{#                            <span class="input-group-text"><i class="fas fa-lock"></i></span>#}
+{#                            <input type="password" name="password" autocomplete="current-password" #}
+{#                                class="form-control" required id="id_password">#}
+{#                        </div>#}
+{#                    </div>#}
+{#                    <div class="d-grid gap-2">#}
+{#                        <button type="submit" class="btn btn-primary">#}
+{#                            <i class="fas fa-sign-in-alt me-2"></i>Login#}
+{#                        </button>#}
+{#                    </div>#}
+{#                    <input type="hidden" name="next" value="{{ next }}">#}
+{#                </form>#}
+{#            </div>#}
+{#            <div class="card-footer text-center">#}
+{#                <p class="mb-1">Don't have an account? <a href="{% url 'register' %}">Register here</a></p>#}
+{#                <p class="mb-0">Forgot your password? <a href="{% url 'password_reset' %}">Reset it here</a></p>#}
+{#            </div>#}
+{#        </div>#}
+{#    </div>#}
+{#</div>#}
+{#{% endblock %}#}
+
+{% extends 'base.html' %}
+
+{% block title %}Login - Leave Management System{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 col-lg-6 col-xl-5 mx-auto">
+        <div class="auth-card card mt-5 shadow auth-fade-in">
+            <div class="card-header text-white text-center">
+                <h4 class="mb-0"><i class="fas fa-sign-in-alt me-2"></i>Welcome Back!</h4>
+                <p class="mb-0 mt-2 text-white-50">Please sign in to your account</p>
+            </div>
+            <div class="card-body">
+                {% if form.errors %}
+                <div class="auth-alert auth-alert-danger">
+                    <strong><i class="fas fa-exclamation-circle me-2"></i>Error:</strong> Your username and password didn't match. Please try again.
+                </div>
+                {% endif %}
+
+                {% if next %}
+                    {% if user.is_authenticated %}
+                    <div class="auth-alert auth-alert-info">
+                        <i class="fas fa-info-circle me-2"></i> Your account doesn't have access to this page. To proceed,
+                        please login with an account that has access.
+                    </div>
+                    {% else %}
+                    <div class="auth-alert auth-alert-info">
+                        <i class="fas fa-info-circle me-2"></i> Please login to access this page.
+                    </div>
+                    {% endif %}
+                {% endif %}
+
+                <form method="post" action="{% url 'login' %}" class="auth-form">
+                    {% csrf_token %}
+                    <div class="mb-4">
+                        <label for="id_username" class="form-label">Username</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-user"></i></span>
+                            <input type="text" name="username" autofocus autocapitalize="none"
+                                autocomplete="username" maxlength="150" class="form-control"
+                                required id="id_username">
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <label for="id_password" class="form-label">Password</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                            <input type="password" name="password" autocomplete="current-password"
+                                class="form-control" required id="id_password">
+                        </div>
+                    </div>
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="auth-btn auth-btn-primary btn btn-primary">
+                            <i class="fas fa-sign-in-alt me-2"></i>Sign In
+                        </button>
+                    </div>
+                    <input type="hidden" name="next" value="{{ next }}">
+                </form>
+            </div>
+            <div class="card-footer text-center">
+                <p class="mb-1">Don't have an account? <a href="{% url 'register' %}" class="text-primary fw-bold">Register here</a></p>
+                <p class="mb-0">Forgot your password? <a href="{% url 'password_reset' %}" class="text-primary">Reset it here</a></p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

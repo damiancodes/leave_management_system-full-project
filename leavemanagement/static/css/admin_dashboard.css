@@ -1,0 +1,183 @@
+/* Admin Dashboard Modern Enhancements */
+
+/* Card styling improvements - building on existing styles */
+.card {
+    border-radius: 10px;
+    border: none;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
+    margin-bottom: 24px;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+    border-top-left-radius: 10px !important;
+    border-top-right-radius: 10px !important;
+    font-weight: 600;
+    padding: 15px 20px;
+}
+
+.card-body {
+    padding: 20px;
+}
+
+/* Admin Actions styling */
+.admin-actions .list-group-item {
+    border-left: none;
+    border-right: none;
+    padding: 15px 20px;
+    transition: background-color 0.2s;
+    border-radius: 0;
+}
+
+.admin-actions .list-group-item:first-child {
+    border-top: none;
+}
+
+.admin-actions .list-group-item:last-child {
+    border-bottom: none;
+}
+
+.admin-actions .list-group-item:hover {
+    background-color: #f8f9fa;
+    transform: translateX(5px);
+}
+
+.admin-actions .list-group-item i {
+    transition: transform 0.2s;
+}
+
+.admin-actions .list-group-item:hover i {
+    transform: scale(1.2);
+}
+
+/* Stats cards enhancements - combines your stat-card styles with additional features */
+.stats-card {
+    border-radius: 10px;
+    height: 100%;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    padding: 20px;
+    min-height: 160px;
+    transition: transform 0.2s;
+}
+
+.stats-card:hover {
+    transform: translateY(-5px);
+}
+
+.stats-card::before {
+    content: '';
+    position: absolute;
+    top: -20px;
+    right: -20px;
+    background: rgba(255, 255, 255, 0.1);
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    z-index: 0;
+}
+
+.stats-card i,
+.stats-card .stat-icon {
+    font-size: 2.5rem;
+    margin-bottom: 15px;
+    position: relative;
+    z-index: 1;
+    opacity: 0.8;
+}
+
+.stats-card h3,
+.stats-card .stat-value {
+    font-size: 2.2rem;
+    font-weight: 700;
+    margin-bottom: 5px;
+    position: relative;
+    z-index: 1;
+}
+
+.stats-card p {
+    font-size: 1rem;
+    opacity: 0.9;
+    position: relative;
+    z-index: 1;
+    font-weight: 500;
+}
+
+/* Color variations for stat cards - using your existing gradient styles */
+.bg-primary.stats-card {
+    background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
+}
+
+.bg-success.stats-card {
+    background: linear-gradient(135deg, #1cc88a 0%, #13855c 100%);
+}
+
+.bg-warning.stats-card {
+    background: linear-gradient(135deg, #f6c23e 0%, #dda20a 100%);
+}
+
+.bg-danger.stats-card {
+    background: linear-gradient(135deg, #e74a3b 0%, #be2617 100%);
+}
+
+/* Setup required section */
+.setup-required {
+    background-color: #fff8e1;
+    border-left: 4px solid #ffc107;
+}
+
+.setup-required .alert {
+    background-color: transparent;
+    border: 1px dashed #ffc107;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .stats-card {
+        margin-bottom: 15px;
+    }
+
+    .card {
+        margin-bottom: 20px;
+    }
+}
+
+/* Animation for stats counters */
+.counter-value {
+    animation: countUp 2s ease-out;
+}
+
+@keyframes countUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Page header enhancements */
+.dashboard-header {
+    padding: 20px 0;
+    margin-bottom: 25px;
+    border-bottom: 1px solid #e3e6f0;
+}
+
+.dashboard-header h2 {
+    font-weight: 700;
+    color: #5a5c69;
+}
+
+.dashboard-header .breadcrumb {
+    background: transparent;
+    padding: 0;
+    margin: 0;
+}

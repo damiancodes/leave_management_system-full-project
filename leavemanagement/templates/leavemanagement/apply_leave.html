@@ -1,0 +1,181 @@
+{% extends 'base.html' %}
+
+{% block title %}Apply for Leave - Leave Management System{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12 mb-4">
+        <h2><i class="fas fa-plus-circle me-2"></i>Apply for Leave</h2>
+        <hr>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-8 col-md-10 mx-auto">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Leave Application Form</h5>
+            </div>
+            <div class="card-body">
+                <form method="post" id="leaveForm">
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label for="leave_type" class="form-label">Leave Type</label>
+                        <select class="form-select" id="leave_type" name="leave_type" required>
+                            <option value="">Select Leave Type</option>
+                            {% for leave_type in leave_types %}
+                            <option value="{{ leave_type.id }}">{{ leave_type.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="start_date" class="form-label">Start Date</label>
+                            <input type="text" class="form-control date-picker" id="start_date" name="start_date" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="end_date" class="form-label">End Date</label>
+                            <input type="text" class="form-control date-picker" id="end_date" name="end_date" required>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="requested_days" class="form-label">Number of Days</label>
+                        <input type="number" class="form-control" id="requested_days" name="requested_days" readonly required>
+                        <div class="form-text" id="balance-info"></div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="reason" class="form-label">Reason for Leave</label>
+                        <textarea class="form-control" id="reason" name="reason" rows="3" required></textarea>
+                    </div>
+                    
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="confirm_policy" required>
+                        <label class="form-check-label" for="confirm_policy">
+                            I confirm that I have read the leave policy and my information is correct.
+                        </label>
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary">Submit Leave Request</button>
+                        <a href="{% url 'leavemanagement:dashboard' %}" class="btn btn-outline-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+            <div class="card-footer">
+                <div class="alert alert-info mb-0">
+                    <h6><i class="fas fa-info-circle me-1"></i> Important Notes:</h6>
+                    <ul class="mb-0">
+                        <li>Leave requests should be submitted at least 3 days in advance</li>
+                        <li>For emergency leaves, please contact your manager directly</li>
+                        <li>Approval may take up to 24 hours</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-4 col-md-10 mx-auto mt-4 mt-lg-0">
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0">Available Leave Balance</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Leave Type</th>
+                                <th>Remaining</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for balance in leave_balances %}
+                            <tr>
+                                <td>{{ balance.leave_type.name }}</td>
+                                <td>
+                                    <span class="badge {% if balance.remaining_days > 5 %}bg-success{% elif balance.remaining_days > 0 %}bg-warning{% else %}bg-danger{% endif %}">
+                                        {{ balance.remaining_days }}
+                                    </span>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="2" class="text-center">No leave balances available.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card mt-4">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0">Upcoming Holidays</h5>
+            </div>
+            <div class="card-body">
+                <ul class="list-group">
+                    {% for holiday in upcoming_holidays %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        {{ holiday.name }}
+                        <span class="badge bg-primary">{{ holiday.date|date:"d M" }}</span>
+                    </li>
+                    {% empty %}
+                    <li class="list-group-item">No upcoming holidays.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize date pickers
+        const dateConfig = {
+            altInput: true,
+            altFormat: "F j, Y",
+            dateFormat: "Y-m-d",
+            minDate: "today"
+        };
+        flatpickr(".date-picker", dateConfig);
+        
+        // Calculate days between dates
+        const startDateInput = document.getElementById('start_date');
+        const endDateInput = document.getElementById('end_date');
+        const requestedDaysInput = document.getElementById('requested_days');
+        
+        function calculateDays() {
+            if (startDateInput.value && endDateInput.value) {
+                const start = new Date(startDateInput.value);
+                const end = new Date(endDateInput.value);
+                
+                // Ensure end date is not before start date
+                if (end < start) {
+                    endDateInput.value = startDateInput.value;
+                    return;
+                }
+                
+                // Calculate days difference
+                const diffTime = Math.abs(end - start);
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1; // Include both start and end days
+                requestedDaysInput.value = diffDays;
+            }
+        }
+        
+        startDateInput.addEventListener('change', calculateDays);
+        endDateInput.addEventListener('change', calculateDays);
+    });
+</script>
+{% endblock %}

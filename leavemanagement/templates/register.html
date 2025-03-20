@@ -1,0 +1,221 @@
+
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Register - Leave Management System{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Register page modern background enhancement */
+    body.register-page {
+        background-color: #f5f7ff;
+        position: relative;
+        overflow-x: hidden;
+        min-height: 100vh;
+    }
+
+    /* Large gradient circle in top right */
+    body.register-page::before {
+        content: "";
+        position: absolute;
+        top: -150px;
+        right: -150px;
+        width: 500px;
+        height: 500px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, rgba(78, 115, 223, 0.15) 0%, rgba(78, 115, 223, 0.3) 100%);
+        z-index: 0;
+    }
+
+    /* Large gradient circle in bottom left */
+    body.register-page::after {
+        content: "";
+        position: absolute;
+        bottom: -150px;
+        left: -150px;
+        width: 400px;
+        height: 400px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, rgba(78, 115, 223, 0.15) 0%, rgba(78, 115, 223, 0.3) 100%);
+        z-index: 0;
+    }
+
+    /* Decorative shapes */
+    .shape-1, .shape-2, .shape-3, .shape-4 {
+        position: absolute;
+        z-index: 0;
+    }
+
+    /* Square shape rotated to diamond */
+    .shape-1 {
+        width: 100px;
+        height: 100px;
+        top: 20%;
+        left: 10%;
+        background-color: rgba(78, 115, 223, 0.1);
+        border-radius: 15px;
+        transform: rotate(45deg);
+    }
+
+    /* Small square with more rounded corners */
+    .shape-2 {
+        width: 70px;
+        height: 70px;
+        bottom: 25%;
+        right: 10%;
+        background-color: rgba(78, 115, 223, 0.1);
+        border-radius: 20px;
+        transform: rotate(20deg);
+    }
+
+    /* Small circle */
+    .shape-3 {
+        width: 60px;
+        height: 60px;
+        top: 35%;
+        right: 20%;
+        background-color: rgba(78, 115, 223, 0.08);
+        border-radius: 50%;
+    }
+
+    /* Small ring (circle with border) */
+    .shape-4 {
+        width: 40px;
+        height: 40px;
+        bottom: 40%;
+        left: 20%;
+        border: 5px solid rgba(78, 115, 223, 0.08);
+        border-radius: 50%;
+    }
+
+    /* Enhancement for your existing auth-card */
+    .auth-card {
+        position: relative;
+        z-index: 1;
+    }
+
+    /* Subtle shadow enhancement to make form pop against new background */
+    .auth-card.shadow {
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+    }
+</style>
+{% endblock %}
+
+{% block body_class %}register-page{% endblock %}
+
+{% block content %}
+<!-- Decorative background shapes -->
+<div class="shape-1"></div>
+<div class="shape-2"></div>
+<div class="shape-3"></div>
+<div class="shape-4"></div>
+
+<div class="row">
+    <div class="col-md-8 col-lg-6 col-xl-5 mx-auto">
+        <div class="auth-card card mt-5 mb-5 shadow auth-fade-in">
+            <div class="card-header text-white text-center">
+                <h4 class="mb-0"><i class="fas fa-user-plus me-2"></i>Create Your Account</h4>
+                <p class="mb-0 mt-2 text-white-50">Join our leave management system</p>
+            </div>
+            <div class="card-body">
+                {% if form.errors %}
+                <div class="auth-alert auth-alert-danger">
+                    <strong><i class="fas fa-exclamation-circle me-2"></i>Error:</strong> Please correct the errors below.
+                </div>
+                {% endif %}
+
+                <form method="post" action="{% url 'register' %}" class="auth-form">
+                    {% csrf_token %}
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="id_first_name" class="form-label">First Name</label>
+                            <input type="text" name="first_name" class="form-control"
+                                required id="id_first_name" value="{{ form.first_name.value|default:'' }}">
+                            {% if form.first_name.errors %}
+                            <div class="text-danger small mt-1">{{ form.first_name.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <label for="id_last_name" class="form-label">Last Name</label>
+                            <input type="text" name="last_name" class="form-control"
+                                required id="id_last_name" value="{{ form.last_name.value|default:'' }}">
+                            {% if form.last_name.errors %}
+                            <div class="text-danger small mt-1">{{ form.last_name.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="id_username" class="form-label">Username</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-user"></i></span>
+                            <input type="text" name="username" autofocus autocapitalize="none"
+                                class="form-control" required id="id_username" value="{{ form.username.value|default:'' }}">
+                        </div>
+                        {% if form.username.errors %}
+                        <div class="text-danger small mt-1">{{ form.username.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="id_email" class="form-label">Email</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                            <input type="email" name="email" class="form-control"
+                                required id="id_email" value="{{ form.email.value|default:'' }}">
+                        </div>
+                        {% if form.email.errors %}
+                        <div class="text-danger small mt-1">{{ form.email.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="id_password1" class="form-label">Password</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                            <input type="password" name="password1" class="form-control"
+                                required id="id_password1">
+                        </div>
+                        {% if form.password1.errors %}
+                        <div class="text-danger small mt-1">{{ form.password1.errors }}</div>
+                        {% endif %}
+                        <div class="auth-form-text mt-2">
+                            <small>
+                                <ul>
+                                    <li>Your password must contain at least 8 characters.</li>
+                                    <li>Your password can't be entirely numeric.</li>
+                                    <li>Your password can't be too similar to your personal information.</li>
+                                </ul>
+                            </small>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="id_password2" class="form-label">Confirm Password</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                            <input type="password" name="password2" class="form-control"
+                                required id="id_password2">
+                        </div>
+                        {% if form.password2.errors %}
+                        <div class="text-danger small mt-1">{{ form.password2.errors }}</div>
+                        {% endif %}
+                        <div class="auth-form-text mt-1">
+                            <small>Enter the same password as before, for verification.</small>
+                        </div>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="auth-btn auth-btn-primary btn btn-primary">
+                            <i class="fas fa-user-plus me-2"></i>Create Account
+                        </button>
+                    </div>
+                </form>
+            </div>
+            <div class="card-footer text-center">
+                <p class="mb-0">Already have an account? <a href="{% url 'login' %}" class="text-primary fw-bold">Login here</a></p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
