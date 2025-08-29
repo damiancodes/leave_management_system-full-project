@@ -11,15 +11,9 @@ This project implements a **Leave Management System** with the following main co
 
 Welcome
 
-![Employee Dashboard](https://github.com/damiancodes/leave_management_system-full-project/blob/master/leavemanagement/static/images/home_employee.png)
-
-
 ## Home Login
 
 You need to access the system? Login.
-
-![Login](https://github.com/damiancodes/leave_management_system-full-project/blob/master/leavemanagement/static/images/login.png)
-
 
 ## Employee Dashboard
 
